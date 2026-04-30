@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error 404: Translation Not Found — EFL Carousel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --slide-size: 540px;
+    --pink: #FF2D78;
+    --pink-lt: #FFE0ED;
+    --pink-md: #FF6FA3;
+    --black: #0A0A0A;
+    --dark: #111014;
+    --dark2: #1A1820;
+    --white: #FFFFFF;
+    --off-white: #FFF0F5;
+    --wrong: #FF2D78;
+    --right: #00C17A;
+    --right-lt: #D6FFF0;
+  }
+
+  body {
+    background: #0A0A0A;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    gap: 32px;
+  }
+
+  h1.page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.25);
+  }
+
+  .carousel {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 20px; width: 100%; max-width: var(--slide-size);
+  }
+
+  .slide {
+    width: var(--slide-size); height: var(--slide-size);
+    border-radius: 20px; overflow: hidden; position: relative;
+    display: none; flex-direction: column;
+    box-shadow: 0 0 0 1px rgba(255,45,120,.2), 0 32px 80px rgba(255,45,120,.15);
+  }
+  .slide.active { display: flex; animation: fadeIn .22s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:scale(.98); } to { opacity:1; transform:scale(1); } }
+
+  .nav-row { display: flex; align-items: center; gap: 14px; }
+  .nav-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1.5px solid rgba(255,45,120,.3);
+    background: rgba(255,45,120,.08);
+    color: var(--pink); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: rgba(255,45,120,.2); }
+  .dots { display: flex; gap: 6px; }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,45,120,.2); cursor: pointer; transition: all .2s;
+  }
+  .dot.active { background: var(--pink); width: 18px; border-radius: 3px; }
+
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .thumb {
+    width: 52px; height: 52px; border-radius: 8px; cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color .15s, transform .15s;
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: .04em; color: #fff; text-align: center; line-height: 1.2; padding: 4px;
+  }
+  .thumb:hover { transform: scale(1.06); }
+  .thumb.active { border-color: var(--pink); }
+
+  .counter {
+    position: absolute; top: 18px; right: 18px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: .06em; padding: 3px 9px; border-radius: 20px;
+    background: rgba(255,45,120,.15); color: var(--pink-md);
+    border: 1px solid rgba(255,45,120,.2);
+  }
+
+  /* ══ SLIDE 1 — COVER ══ */
+  .s1 { background: var(--black); padding: 52px 44px 44px; justify-content: flex-end; }
+  .s1-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 65% 55% at 85% 15%, rgba(255,45,120,.4) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 10% 90%, rgba(255,45,120,.15) 0%, transparent 60%);
+  }
+  .s1-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,45,120,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,45,120,.06) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  .s1 .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--pink); margin-bottom: 16px;
+  }
+  .s1 .tag::before { content:''; display:block; width:20px; height:2px; background:var(--pink); }
+  .s1 h2 {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 44px; line-height: 1.0; color: #fff; margin-bottom: 14px;
+  }
+  .s1 h2 em { font-style: normal; color: var(--pink); }
+  .s1 p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.45); max-width: 320px; }
+  .s1 .swipe {
+    margin-top: 28px; display: flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: .08em; color: rgba(255,45,120,.4);
+    font-family: 'Syne', sans-serif; text-transform: uppercase;
+  }
+  .arrow-ani { display: inline-block; animation: nudge 1.4s ease-in-out infinite; }
+  @keyframes nudge { 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(5px); } }
+
+  /* ══ ERROR SLIDES — base ══ */
+  .error-slide { background: var(--dark2); padding: 40px 40px 36px; justify-content: space-between; }
+  .error-slide .top { flex-shrink: 0; }
+  .error-slide .type-badge {
+    display: inline-block;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    background: rgba(255,45,120,.15); color: var(--pink);
+    border: 1px solid rgba(255,45,120,.25);
+  }
+  .error-slide h2 {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+    line-height: 1.2; margin-bottom: 18px; color: #fff;
+  }
+  .cards { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+  .card { border-radius: 12px; padding: 12px 16px; }
+  .card .card-label {
+    font-size: 9px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .card .card-text { font-size: 15px; font-weight: 500; line-height: 1.3; }
+  .card.wrong {
+    background: rgba(255,45,120,.08); border: 1px solid rgba(255,45,120,.25);
+  }
+  .card.wrong .card-label { color: var(--pink-md); }
+  .card.wrong .card-text { color: var(--pink); }
+  .card.right {
+    background: rgba(0,193,122,.08); border: 1px solid rgba(0,193,122,.25);
+  }
+  .card.right .card-label { color: rgba(0,193,122,.7); }
+  .card.right .card-text { color: var(--right); }
+  .explain {
+    margin-top: 12px; font-size: 12px; line-height: 1.65; border-radius: 8px;
+    padding: 10px 14px; border-left: 3px solid var(--pink); flex-shrink: 0;
+    background: rgba(255,45,120,.06); color: rgba(255,255,255,.6);
+  }
+  .explain strong { color: var(--pink-md); }
+
+  /* ══ THEORY SLIDE ══ */
+  .s-theory { background: var(--dark2); padding: 40px 40px 36px; justify-content: space-between; }
+  .s-theory .section-tag {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--pink); margin-bottom: 10px;
+  }
+  .s-theory h2 {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px;
+    line-height: 1.2; color: #fff; margin-bottom: 20px;
+  }
+  .theory-items { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+  .theory-item {
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+    background: rgba(255,45,120,.07); border: 1px solid rgba(255,45,120,.15);
+  }
+  .theory-item .icon {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
+    background: var(--pink); color: #fff;
+  }
+  .theory-item .body .name {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+    margin-bottom: 3px; color: var(--pink-md);
+  }
+  .theory-item .body .desc { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,.55); }
+
+  /* ══ TIPS SLIDE ══ */
+  .s-tips { background: var(--black); padding: 48px 44px 44px; justify-content: space-between; }
+  .s-tips .bg-deco {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(255,45,120,.22) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 90% 95%, rgba(255,45,120,.1) 0%, transparent 60%);
+  }
+  .s-tips .section-tag {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--pink); margin-bottom: 10px;
+  }
+  .s-tips h2 {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 26px;
+    line-height: 1.15; color: #fff; margin-bottom: 22px;
+  }
+  .tips-list { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+  .tip-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: rgba(255,255,255,.04); border-radius: 12px; padding: 12px 16px;
+    border: 1px solid rgba(255,45,120,.15);
+  }
+  .tip-num {
+    width: 24px; height: 24px; flex-shrink: 0; border-radius: 6px;
+    background: var(--pink); display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; color: #fff;
+  }
+  .tip-text { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.7); }
+  .s-tips .cta {
+    text-align: center; font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+    color: rgba(255,45,120,.3); font-family: 'Syne', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Error 404: Translation Not Found — EFL Carousel (8 slides)</h1>
+
+<div class="carousel">
+
+  <!-- SLIDE 1: COVER -->
+  <div class="slide active" id="slide-1">
+    <div class="s1-bg"></div>
+    <div class="s1-grid"></div>
+    <div class="counter">1 / 8</div>
+    <div class="s1">
+      <div>
+        <div class="tag">EFL Translation Errors</div>
+        <h2>Error<br><em>404:</em><br>Translation<br>Not Found</h2>
+        <p>10 common mistakes Indonesian EFL learners make — and the SLA theory behind each one.</p>
+        <div class="swipe">Swipe to explore <span class="arrow-ani">→</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: LEXICAL 1 -->
+  <div class="slide" id="slide-2">
+    <div class="counter">2 / 8</div>
+    <div class="error-slide">
+      <div class="top">
+        <div class="type-badge">Lexical Error</div>
+        <h2>"Boring" vs "Bored"<br>— They're not the same</h2>
+      </div>
+      <div class="cards">
+        <div class="card wrong">
+          <div class="card-label">Incorrect</div>
+          <div class="card-text">I am boring. → Saya membosankan.</div>
+        </div>
+        <div class="card right">
+          <div class="card-label">Correct</div>
+          <div class="card-text">I am bored. → Saya bosan.</div>
+        </div>
+      </div>
+      <div class="explain">
+        Indonesian uses one word "bosan" for both states. English splits them: <strong>boring</strong> = causes boredom; <strong>bored</strong> = experiencing it. Classic L1 transfer.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: LEXICAL 2 -->
+  <div class="slide" id="slide-3">
+    <div class="counter">3 / 8</div>
+    <div class="error-slide">
+      <div class="top">
+        <div class="type-badge">Lexical Error</div>
+        <h2>"She has 20 years"<br>— Age needs "to be"</h2>
+      </div>
+      <div class="cards">
+        <div class="card wrong">
+          <div class="card-label">Incorrect</div>
+          <div class="card-text">She has 20 years. → Dia punya 20 tahun.</div>
+        </div>
+        <div class="card right">
+          <div class="card-label">Correct</div>
+          <div class="card-text">She is 20 years old.</div>
+        </div>
+      </div>
+      <div class="explain">
+        Indonesian uses "punya" (have) for age. English uses <strong>to be</strong>. This structural mismatch is predicted directly by Contrastive Analysis (Lado, 1957).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: SYNTACTIC -->
+  <div class="slide" id="slide-4">
+    <div class="counter">4 / 8</div>
+    <div class="error-slide">
+      <div class="top">
+        <div class="type-badge">Syntactic Error</div>
+        <h2>The missing "to be"<br>&amp; auxiliary verbs</h2>
+      </div>
+      <div class="cards">
+        <div class="card wrong">
+          <div class="card-label">Incorrect</div>
+          <div class="card-text">He very smart. / Why you not come?</div>
+        </div>
+        <div class="card right">
+          <div class="card-label">Correct</div>
+          <div class="card-text">He is very smart. / Why didn't you come?</div>
+        </div>
+      </div>
+      <div class="explain">
+        Indonesian has no copula — "Dia sangat pintar" is complete. Learners transfer this zero-copula pattern into English. Questions also need auxiliary inversion (interlanguage error).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SEMANTIC -->
+  <div class="slide" id="slide-5">
+    <div class="counter">5 / 8</div>
+    <div class="error-slide">
+      <div class="top">
+        <div class="type-badge">Semantic Error</div>
+        <h2>Idioms can't be<br>decoded word-by-word</h2>
+      </div>
+      <div class="cards">
+        <div class="card wrong">
+          <div class="card-label">Incorrect</div>
+          <div class="card-text">"Open the lamp." / "Dia melewati jauh."</div>
+        </div>
+        <div class="card right">
+          <div class="card-label">Correct</div>
+          <div class="card-text">"Turn on the lamp." / "He passed away."</div>
+        </div>
+      </div>
+      <div class="explain">
+        "Open" ≠ "turn on" for devices. "Passed away" = died — not a literal movement. Idioms must be learned as <strong>lexical chunks</strong>, not decoded component by component.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: PRAGMATIC -->
+  <div class="slide" id="slide-6">
+    <div class="counter">6 / 8</div>
+    <div class="error-slide">
+      <div class="top">
+        <div class="type-badge">Pragmatic Error</div>
+        <h2>Fixed expressions<br>break when modified</h2>
+      </div>
+      <div class="cards">
+        <div class="card wrong">
+          <div class="card-label">Incorrect</div>
+          <div class="card-text">"Rest in peace for you." / "He is my senior."</div>
+        </div>
+        <div class="card right">
+          <div class="card-label">Correct</div>
+          <div class="card-text">"Rest in peace." / "He is my senior colleague."</div>
+        </div>
+      </div>
+      <div class="explain">
+        "Rest in peace" is a formulaic expression — adding "for you" breaks it socially. "Senior" in English always needs context (colleague, student). Pragmatic transfer from Indonesian.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: WHY IT HAPPENS -->
+  <div class="slide" id="slide-7">
+    <div class="counter">7 / 8</div>
+    <div class="s-theory">
+      <div>
+        <div class="section-tag">SLA Theory</div>
+        <h2>Why do these errors happen?</h2>
+      </div>
+      <div class="theory-items">
+        <div class="theory-item">
+          <div class="icon">L1</div>
+          <div class="body">
+            <div class="name">Language Transfer (Lado, 1957)</div>
+            <div class="desc">Indonesian patterns bleed into English output — especially copula, age structure, and intensifiers.</div>
+          </div>
+        </div>
+        <div class="theory-item">
+          <div class="icon">IL</div>
+          <div class="body">
+            <div class="name">Interlanguage (Selinker, 1972)</div>
+            <div class="desc">Learners build an internal grammar that is "almost English" — hypotheses that are close but not yet target-like.</div>
+          </div>
+        </div>
+        <div class="theory-item">
+          <div class="icon">LT</div>
+          <div class="body">
+            <div class="name">Literal Translation</div>
+            <div class="desc">Word-by-word processing ignores idiom, context, and social convention — producing correct grammar but wrong meaning.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: TIPS -->
+  <div class="slide" id="slide-8">
+    <div class="s-tips">
+      <div class="bg-deco"></div>
+      <div style="position:relative;">
+        <div class="section-tag">3 Golden Rules</div>
+        <h2>How to avoid<br>these errors</h2>
+      </div>
+      <div class="tips-list" style="position:relative;">
+        <div class="tip-row">
+          <div class="tip-num">1</div>
+          <div class="tip-text"><strong style="color:#fff;">Think meaning, not words.</strong> Ask what the sentence is trying to DO, not just say.</div>
+        </div>
+        <div class="tip-row">
+          <div class="tip-num">2</div>
+          <div class="tip-text"><strong style="color:#fff;">Learn idioms as whole chunks.</strong> Fixed expressions can't be decoded — memorize them complete.</div>
+        </div>
+        <div class="tip-row">
+          <div class="tip-num">3</div>
+          <div class="tip-text"><strong style="color:#fff;">Notice where Indonesian diverges.</strong> Copula, auxiliaries, and intensifiers are high-risk zones. Give them extra attention.</div>
+        </div>
+      </div>
+      <div class="cta" style="position:relative;">Save &amp; share with your EFL classmates</div>
+    </div>
+  </div>
+
+  <!-- DOTS + PREV/NEXT -->
+  <div class="nav-row">
+    <button class="nav-btn" onclick="move(-1)">&#8592;</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" onclick="move(1)">&#8594;</button>
+  </div>
+
+  <!-- THUMBNAILS -->
+  <div class="thumbs" id="thumbs"></div>
+
+</div>
+
+<script>
+const SLIDES = 8;
+const THUMB_LABELS = ['Cover','Lexical 1','Lexical 2','Syntactic','Semantic','Pragmatic','Theory','Tips'];
+const THUMB_COLORS = ['#1A0010','#200015','#200015','#1A0010','#200015','#1A0010','#200015','#0A0A0A'];
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+const thumbsEl = document.getElementById('thumbs');
+
+for(let i=0;i<SLIDES;i++){
+  const d = document.createElement('div');
+  d.className = 'dot'+(i===0?' active':'');
+  d.onclick = () => go(i);
+  dotsEl.appendChild(d);
+
+  const t = document.createElement('div');
+  t.className = 'thumb'+(i===0?' active':'');
+  t.style.background = THUMB_COLORS[i];
+  t.textContent = THUMB_LABELS[i];
+  t.onclick = () => go(i);
+  thumbsEl.appendChild(t);
+}
+
+function go(n){
+  document.getElementById('slide-'+(cur+1)).classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  thumbsEl.children[cur].classList.remove('active');
+  cur = (n+SLIDES)%SLIDES;
+  document.getElementById('slide-'+(cur+1)).classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  thumbsEl.children[cur].classList.add('active');
+}
+function move(d){ go(cur+d); }
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight') move(1);
+  if(e.key==='ArrowLeft')  move(-1);
+});
+</script>
+</body>
+</html>
